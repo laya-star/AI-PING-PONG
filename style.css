@@ -1,0 +1,18 @@
+.heading{
+    text-align: center;
+    color: darkblue;
+}
+#start,#status{
+    display: inline;
+}
+.heading button{
+    color: darkslategrey;
+}
+#para{
+    color: gainsboro;
+    font-size: medium;
+}
+.copy_right_footer{
+    color: ghostwhite;
+    
+}
