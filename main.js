@@ -1,6 +1,7 @@
 rightWristX="";
 rightWristY="";
 rightWristScore="";
+GameStatus="";
 /*created by prashant shukla */
 
 var paddle2 =10,paddle1=10;
@@ -33,6 +34,10 @@ function setup(){
   poseNet=ml5.poseNet(video,modelLoaded);
   poseNet.on('poses',gotPoses);
 }
+function preload(){
+  ball_touch_paddle = loadSound("ball_touch_paddle.wav");
+  missed = loadSound("missed.wav");
+}
 function gotPoses(){
   if(results.length>0){
     rightWristX=results[0].pose.rightWrist.x;
@@ -40,12 +45,19 @@ function gotPoses(){
     rightWristScore=results[0].pose.keypoints[10].score;
   }
 }
+function startGame(){
+  GameStatus="start";
+  document.getElementById("status").innerHTML="Game Is Loaded";
+}
 function modelLoaded(){
   console.log("Model Loaded!");
 }
 
 
 function draw(){
+  if(GameStatus=="start"){
+
+  
 image(video,0,0,700,600);
 if(rightWristScore>0.2){
   fill("red");
@@ -69,7 +81,9 @@ if(rightWristScore>0.2){
    fill(250,0,0);
     stroke(0,0,250);
     strokeWeight(0.5);
-   paddle1Y = mouseY; 
+   paddle1Y = rightWristY; 
+   
+
    rect(paddle1X,paddle1Y,paddle1,paddle1Height,100);
    
    
@@ -89,6 +103,7 @@ if(rightWristScore>0.2){
    
    //function move call which in very important
     move();
+  }
 }
 
 
@@ -128,6 +143,11 @@ function drawScore(){
 
 
 //very important function of this game
+function restart(){
+  pcscore=0;
+  playerscore=0;
+
+}
 function move(){
    fill(50,350,0);
    stroke(255,0,0);
@@ -137,6 +157,11 @@ function move(){
    ball.y = ball.y + ball.dy;
    if(ball.x+ball.r>width-ball.r/2){
        ball.dx=-ball.dx-0.5;       
+   }
+   if(ball.y>=paddle1Y&&ball.y<=paddle1Y+paddle1Height){
+     ball_touch_paddle.play();
+   }else{
+     missed.play();
    }
   if (ball.x-2.5*ball.r/2< 0){
   if (ball.y >= paddle1Y&& ball.y <= paddle1Y + paddle1Height) {
@@ -156,7 +181,7 @@ if(pcscore ==4){
     stroke("white");
     textSize(25)
     text("Game Over!☹☹",width/2,height/2);
-    text("Reload The Page!",width/2,height/2+30)
+    text("Press the Restart Button to restart the game!",width/2,height/2+30)
     noLoop();
     pcscore = 0;
 }
